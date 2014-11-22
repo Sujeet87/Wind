@@ -4,7 +4,7 @@ using System.Collections;
 public class triggerWind : MonoBehaviour {
 
 	// Use this for initialization
-    //public LayerMask mask;
+    public LayerMask mask;
 	void Start () {
 
         color = ribbon.tag;
@@ -106,7 +106,7 @@ public class triggerWind : MonoBehaviour {
                 if (rayTravelDirection == currentSwipeDirection)
                 {
 
-                    if (Physics.Raycast(transform.position, k, out d, Mathf.Infinity ))
+                    if (Physics.Raycast(transform.position, k, out d, Mathf.Infinity,mask ))
                     {
                         Debug.DrawLine(transform.position, d.collider.transform.position, Color.green, 20, false);
 
@@ -184,7 +184,7 @@ public class triggerWind : MonoBehaviour {
                 {
 
 
-                    if (Physics.Raycast(transform.position, k, out d, Mathf.Infinity ))
+                    if (Physics.Raycast(transform.position, k, out d, Mathf.Infinity,mask ))
                     {
                         Debug.DrawLine(transform.position, d.collider.transform.position, Color.green, 20, false);
                         windStart = new Vector3(transform.position.x, camRect.y, transform.position.z);
@@ -383,7 +383,6 @@ public void Swipe()
 
 
 
-RaycastHit2D hit;
    
 
 
@@ -393,27 +392,31 @@ void Update () {
 
 #if UNITY_EDITOR || UNITY_STANDALONE
 
-          if (Input.GetMouseButtonDown(0) )
-          {
+    if (Input.GetMouseButtonDown(0))
+    {
+        //RaycastHit2D hit;
 
-              hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-              //RaycastHit h;
+        //hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        //if (hit.collider != null && hit.collider.gameObject == gameObject)
+        //{
+        //    check = true;
+        //    Debug.Log("work");
+        //}
 
-              //if (Physics.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), transform.position, out h, Mathf.Infinity ))
-              //{
+        RaycastHit hit;
+        Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-              //    Debug.Log("work");
-              //    check = true;
+        if (Physics.Raycast(r, out hit, Mathf.Infinity))
+        {
+            //Debug.Log("Hello");
+            //Debug.Log(hit.collider.transform.position);
+            if (hit.collider != null && hit.collider.gameObject == gameObject)
+                check = true;
 
-              //}
+        }
 
-              if (hit.collider != null && hit.collider.gameObject == gameObject)
-              {
-                  check = true;
-                  Debug.Log("work");
-              }
 
-          }
+    }
 
 #endif
 
@@ -430,6 +433,23 @@ void Update () {
           //        //Debug.Log("still working");
           //    }
           //}
+
+    //if (Input.GetTouch(0).phase == TouchPhase.Began)
+    //{
+
+    //    RaycastHit hit;
+    //    Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+    //    if (Physics.Raycast(r, out hit, Mathf.Infinity))
+    //    {
+    //        if (hit.collider != null && hit.collider.gameObject == gameObject)
+    //        {
+    //            check = true;
+
+    //        }
+
+    //    }
+    //}
 
 #endif
 

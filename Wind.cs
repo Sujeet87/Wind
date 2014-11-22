@@ -37,7 +37,58 @@ public class Wind : MonoBehaviour {
 
         sprite.dimensions = di;
 
-        markBlocks();
+
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        GameObject g = other.collider.gameObject;
+        
+        int k = 3;
+        string label = "";
+        
+        if (g.GetComponent<triggerWind>().color == transform.tag)
+        {
+            //Correct
+            if (!g.transform.GetChild(1).gameObject.activeSelf)
+            {
+                k = 1;
+                label = "oLabel";
+            }
+        }
+
+        else
+        {
+            //Incorrect
+            if (!g.transform.GetChild(0).gameObject.activeSelf)
+            {
+                k = 0;
+                label = "xLabel";
+            }
+        }
+
+        g.transform.GetChild(k).gameObject.SetActive(true); //Enable Block Sign Object
+        g.transform.GetChild(k).GetComponent<smoothFade>().fadeIn(); //Kick in Sign Animation
+
+        GameObject[] colorObj = GameObject.FindGameObjectsWithTag(g.GetComponent<triggerWind>().color);
+
+        foreach (GameObject G in colorObj)
+        {
+            if (G.name == label)
+            {
+                //Update Score
+                G.GetComponent<trackScore>().updateScore();
+
+                // Counter Feedback
+                Vector3 amount = new Vector3(0.5f, 0.5f, 0.5f);
+                float time = GameObject.Find("gameController").GetComponent<anims>().counterPunchSpeed;
+                iTween.PunchScale(G, amount, time);
+
+            }
+        }
+
+        g.GetComponent<triggerWind>().marked = true; // Mark the Block 
+        GameObject.Find("sorter").GetComponent<sortOrderStore>().updateMarkedBlockCount(); //Update Marked Block Counter
 
     }
 
@@ -53,11 +104,9 @@ public class Wind : MonoBehaviour {
             bool check = transform.renderer.bounds.Intersects(g.renderer.bounds);
             //bool check = transform.renderer.bounds.Contains(g.renderer.bounds.center);
 
-
             if (check)
             {
-                Debug.Log(check);
-
+              
                 if (g.GetComponent<triggerWind>().color == transform.tag)
                 {
                     //Correct
@@ -126,6 +175,7 @@ public class Wind : MonoBehaviour {
     void finish()
     {
 
+        //markBlocks();
         GameObject.Find("sorter").GetComponent<sortOrderStore>().checkForOver();
  
     }
